@@ -1,3 +1,4 @@
+#Version.Final
 import time
 
 #Vending Machine Item
@@ -30,31 +31,6 @@ def showProducts():
         print(str(i) + ". " + item + "  |" + str(products_price[item]) + " won 판매 여부: "+ availability(item))
         i = i + 1
 
-#판매가능 여부
-def availability(item):
-    if(products[item] >0):
-        return "O"
-    else:
-        return "X"
-
-def pay_default():
-    money['temp_cash'] = 0
-
-# 결제 선택
-def payment_select():
-    pay_default()
-    print(block*10)
-    print("------Welecom Vending Machine------")
-    showProducts()
-    print("[-----결제-----]결제 방법을 선택해 주세요   " + str(product_price_min))
-    pay_select= input("(0)현금 (1)카드")
-    if(int(pay_select) == 0):
-        pay_cash(0)
-    elif(int(pay_select) == 1):
-        pay_card()
-    elif(int(pay_select)==1004):
-        admin()
-
 def admin():
     print(block * 10)
     print("[----------관리자----------]")
@@ -77,11 +53,13 @@ def ad_products_view():
     for item in items:
         print(str(i) + ". " + item + "  |" + str(products_price[item]) + " won  갯수: " + str(products[item]))
         i = i + 1
+
 def ad_cash_view():
     print("[--------현금 현황---------]")
     print("1000원: " + str(cash['ca1000']))
     print("500원: " + str(cash['ca500']))
     print("100원: " + str(cash['ca100']))
+
 def adminMenu():
     select = int(input("(1) Cash (2)Products (3)Exit (숫자만 입력바랍니다.)"))
     if(select == 1):
@@ -126,6 +104,32 @@ def adminMenu():
         print(block*10)
         payment_select()
 
+#판매가능 여부
+def availability(item):
+    if(products[item] >0):
+        return "O"
+    else:
+        return "X"
+
+#select받은 item이 무엇인지
+def product_select(pro_select):
+    items = list(products.keys())
+    if (0 < int(pro_select) < len(items) + 1):
+        return items[int(pro_select) - 1]
+    elif(int(pro_select) == 100):
+        print("[-----반환-----]")
+        cash_calculator(money['temp_cash'])
+        payment_select()
+
+    else:
+        print("[-----제품이 없습니다----]")
+        print("[-----반환-----]")
+        cash_calculator(money['temp_cash'])
+        payment_select()
+
+#초기화
+def pay_default():
+    money['temp_cash'] = 0
 
 # 0일때는 처음 1 일때는 중간
 def pay_cash(select):
@@ -134,24 +138,24 @@ def pay_cash(select):
         in_ca_1000 = int(input("1000 원 몇개: "))
         in_ca_500 = int(input("500 원 몇개: "))
         in_ca_100 = int(input("100 원 몇개: "))
-
-        cash['ca1000'] += in_ca_1000
-        cash['ca500'] +=  in_ca_500
-        cash['ca100'] +=  in_ca_100
-        money['temp_cash'] += (in_ca_1000 * 1000) + (in_ca_500 * 500) + (in_ca_100 * 100)
-        if(money['temp_cash']> 9900):
+        if ((in_ca_1000 * 1000) + (in_ca_500 * 500) + (in_ca_100 * 100) > 9900):
             print("[-----반환-----] 최대금액 초과")
-            # pay_default()
+            payment_select()
+        else:
+            cash['ca1000'] += in_ca_1000
+            cash['ca500'] +=  in_ca_500
+            cash['ca100'] +=  in_ca_100
+            money['temp_cash'] += (in_ca_1000 * 1000) + (in_ca_500 * 500) + (in_ca_100 * 100)
 
-        elif(product_price_min <= money['temp_cash']):
-            print("------ 현재 투입 금액 : " + str(money['temp_cash']) + "------")
-            showProducts()
-            print("[100 번 입력시 반환]")
-            cash_logic(money['temp_cash'], product_select(int(input("[-----선택-----]제품을 선택 해주세요: "))))
+            if(product_price_min <= money['temp_cash']):
+                print("------ 현재 투입 금액 : " + str(money['temp_cash']) + "------")
+                showProducts()
+                print("[100 번 입력시 반환]")
+                cash_logic(money['temp_cash'], product_select(int(input("[-----선택-----]제품을 선택 해주세요: "))))
 
-        elif(product_price_min > money['temp_cash']):
-            print("[-----반환-----] 최소금액 미만 ")
-            cash_calculator(money['temp_cash'])
+            elif(product_price_min > money['temp_cash']):
+                print("[-----반환-----] 최소금액 미만 ")
+                cash_calculator(money['temp_cash'])
 
     elif(int(select) == 1):
         if (product_price_min <= money['temp_cash']):
@@ -164,8 +168,6 @@ def pay_cash(select):
             print("[-----반환-----] 최소금액 미만 ")
             cash_calculator(money['temp_cash'])
             payment_select()
-
-
 
 def cash_logic(in_money,item):
     product_price_min = min(products_price.values())
@@ -190,22 +192,6 @@ def cash_logic(in_money,item):
         cash_calculator(money['temp_cash'])
         payment_select()
 
-
-def product_select(pro_select):
-    items = list(products.keys())
-    if (0 < int(pro_select) < len(items) + 1):
-        return items[int(pro_select) - 1]
-    elif(int(pro_select) == 100):
-        print("[-----반환-----]")
-        cash_calculator(money['temp_cash'])
-        payment_select()
-
-    else:
-        print("[-----제품이 없습니다----]")
-        print("[-----반환-----]")
-        cash_calculator(money['temp_cash'])
-        payment_select()
-
 def cash_calculator(out_money):
     re = (cash['ca500']*500)+ (cash['ca100']*100)
     res_cas = (out_money//500)-cash['ca500']
@@ -222,8 +208,6 @@ def cash_calculator(out_money):
     cash['ca100'] = cash['ca100'] -res100
 
     print("[반환 금액]500원: "+str(res500)+" | 100원: "+str(res100))
-
-
 
 def pay_card():
     print("카드를 인식시켜 주세요(time.sleep(2))")
@@ -244,6 +228,21 @@ def card_calculator(set_money):
     money['card'] += int(set_money)
     print('[카드 결제]결제 완료!')
     payment_select()
+
+# 결제 선택
+def payment_select():
+    pay_default()
+    print(block*10)
+    print("------Welecom Vending Machine------")
+    showProducts()
+    print("[-----결제-----]결제 방법을 선택해 주세요   " + str(product_price_min))
+    pay_select= input("(0)현금 (1)카드")
+    if(int(pay_select) == 0):
+        pay_cash(0)
+    elif(int(pay_select) == 1):
+        pay_card()
+    elif(int(pay_select)==1004):
+        admin()
 
 payment_select()
 
