@@ -120,7 +120,6 @@ def product_select(pro_select):
         print("[-----반환-----]")
         cash_calculator(money['temp_cash'])
         payment_select()
-
     else:
         print("[-----제품이 없습니다----]")
         print("[-----반환-----]")
@@ -133,6 +132,7 @@ def pay_default():
 
 # 0일때는 처음 1 일때는 중간
 def pay_cash(select):
+    product_price_min = min(products_price.values())
     if(int(select) == 0):
         print("현금을 넣어 주세요 (9900원 이하 까지 가능)")
         in_ca_1000 = int(input("1000 원 몇개: "))
@@ -235,7 +235,7 @@ def payment_select():
     print(block*10)
     print("------Welecom Vending Machine------")
     showProducts()
-    print("[-----결제-----]결제 방법을 선택해 주세요   " + str(product_price_min))
+    print("[-----결제-----]결제 방법을 선택해 주세요   ")
     pay_select= input("(0)현금 (1)카드")
     if(int(pay_select) == 0):
         pay_cash(0)
