@@ -8,4 +8,5 @@
 
 ## Algorithm
 
-![Alt Algorithm](/path/img/자판기 순서도.jpg)
+![Algorithm Image](img/자판기 순서도.jpg)
+
